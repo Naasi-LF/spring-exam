@@ -3,8 +3,10 @@ package org.naasi.springexam.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import java.util.Date;
+import org.springframework.stereotype.Component;
 
+import java.util.Date;
+@Component  // 使此类成为Spring管理的Bean
 public class JwtUtil {
     private String secretKey = "22030531";
 
