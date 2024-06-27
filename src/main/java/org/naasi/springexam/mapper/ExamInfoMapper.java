@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.*;
 import org.naasi.springexam.pojo.ExamInfo;
 import org.naasi.springexam.pojo.Question;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Mapper  // 确保每个Mapper接口都有这个注解，如果没有全局的 @MapperScan
 public interface ExamInfoMapper {
@@ -27,5 +28,14 @@ public interface ExamInfoMapper {
             "JOIN questions q ON eq.question_id = q.question_id " +
             "WHERE ei.exam_id = #{examId}")
     List<Question> findQuestionsByExamId(int examId);
+
+    @Select("SELECT * FROM exam_info WHERE end_time >= NOW()")
+    @Results({
+            @Result(property = "examId", column = "exam_id"),
+            @Result(property = "examName", column = "exam_name"),
+            @Result(property = "startTime", column = "start_time"),
+            @Result(property = "endTime", column = "end_time")
+    })
+    List<ExamInfo> findActiveExams();
 }
 

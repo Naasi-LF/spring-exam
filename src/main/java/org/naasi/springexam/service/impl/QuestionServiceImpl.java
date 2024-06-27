@@ -20,6 +20,11 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<Question> findAll() {
-        return questionMapper.selectAll();  // 调用Mapper的selectAll方法
+        return questionMapper.selectAll();
+    }
+
+    @Override
+    public List<Question> findQuestionsByExamId(int examId) {
+        return questionMapper.findQuestionsByExamId(examId);
     }
 }

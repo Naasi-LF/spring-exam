@@ -35,4 +35,9 @@ public class StudentServiceImpl implements StudentService {
     public boolean deleteStudent(int studentId) {
         return studentInfoMapper.delete(studentId) == 1;
     }
+
+    @Override
+    public StudentInfo getStudentById(int studentId) {
+        return studentInfoMapper.selectById(studentId);
+    }
 }

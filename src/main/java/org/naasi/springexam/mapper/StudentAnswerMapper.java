@@ -2,6 +2,9 @@ package org.naasi.springexam.mapper;
 
 import org.apache.ibatis.annotations.*;
 import org.naasi.springexam.pojo.StudentAnswer;
+
+import java.util.List;
+
 @Mapper  // 确保每个Mapper接口都有这个注解，如果没有全局的 @MapperScan
 public interface StudentAnswerMapper {
     // 学生提交一个题目，会有一个题目的学生题目答案数据
@@ -24,4 +27,15 @@ public interface StudentAnswerMapper {
             "#{studentAnswer}, " +
             "(SELECT correct_answer FROM questions WHERE question_id = #{questionId}) = #{studentAnswer})")
     int insertWithAutoCheck(StudentAnswer studentAnswer);
+
+    @Insert({
+            "<script>",
+            "INSERT INTO student_answers (student_id, exam_id, question_id, correct_answer, student_answer, is_correct) VALUES ",
+            "<foreach collection='answers' item='answer' separator=','>",
+            "(#{answer.studentId}, #{answer.examId}, #{answer.questionId}, #{answer.correctAnswer}, #{answer.studentAnswer}, #{answer.isCorrect})",
+            "</foreach>",
+            "</script>"
+    })
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int batchInsert(List<StudentAnswer> answers);
 }

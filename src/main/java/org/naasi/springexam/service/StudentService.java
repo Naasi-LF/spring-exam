@@ -7,4 +7,5 @@ public interface StudentService {
     StudentInfo login(int studentId, String password);
     boolean updateStudentInfo(StudentInfo studentInfo);
     boolean deleteStudent(int studentId);
+    StudentInfo getStudentById(int studentId);  // 新增方法
 }

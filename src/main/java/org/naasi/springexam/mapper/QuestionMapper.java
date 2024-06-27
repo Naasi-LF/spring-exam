@@ -32,4 +32,7 @@ public interface QuestionMapper {
     // 删除题目
     @Delete("DELETE FROM questions WHERE question_id = #{questionId}")
     int delete(int questionId);
+
+    @Select("SELECT q.* FROM questions q JOIN exam_questions eq ON q.question_id = eq.question_id WHERE eq.exam_id = #{examId}")
+    List<Question> findQuestionsByExamId(int examId);
 }

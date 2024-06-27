@@ -1,5 +1,6 @@
 package org.naasi.springexam.controller;
 
+import org.naasi.springexam.mapper.ExamInfoMapper;
 import org.naasi.springexam.pojo.ExamInfo;
 import org.naasi.springexam.pojo.ExamPublishDTO;
 import org.naasi.springexam.pojo.Question;
@@ -22,6 +23,8 @@ public class TeacherController {
     @Autowired
     private ExamService examService;  // 注入ExamService
 
+    @Autowired
+    private ExamInfoMapper examInfoMapper;
     @PostMapping("/addQuestion")
     public ResponseEntity<?> addQuestion(@RequestBody Question question) {
         boolean isAdded = questionService.addQuestion(question);
@@ -49,4 +52,14 @@ public class TeacherController {
         List<Question> questions = questionService.findAll();
         return ResponseEntity.ok(questions);
     }
+    @GetMapping("/activeExams")
+    public ResponseEntity<List<ExamInfo>> getActiveExams() {
+        List<ExamInfo> activeExams = examInfoMapper.findActiveExams();
+        if (activeExams.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok(activeExams);
+    }
+
+
 }
