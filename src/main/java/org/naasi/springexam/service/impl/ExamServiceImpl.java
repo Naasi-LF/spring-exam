@@ -1,17 +1,11 @@
 package org.naasi.springexam.service.impl;
 
-import org.naasi.springexam.mapper.ExamInfoMapper;
-import org.naasi.springexam.mapper.ExamQuestionMapper;
-import org.naasi.springexam.mapper.StudentAnswerMapper;
-import org.naasi.springexam.pojo.ExamInfo;
-import org.naasi.springexam.pojo.ExamQuestion;
-import org.naasi.springexam.pojo.StudentAnswer;
+import org.naasi.springexam.mapper.*;
+import org.naasi.springexam.pojo.*;
 import org.naasi.springexam.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,7 +16,10 @@ public class ExamServiceImpl implements ExamService {
     private ExamQuestionMapper examQuestionMapper;
     @Autowired
     private StudentAnswerMapper studentAnswerMapper;
-
+    @Autowired
+    private QuestionMapper questionMapper;
+    @Autowired
+    private ExamResultMapper examResultMapper;
     @Override
     @Transactional
     public int insertExam(ExamInfo examInfo) {
@@ -38,12 +35,34 @@ public class ExamServiceImpl implements ExamService {
         });
     }
 
-
-
+    @Override
+    public List<Question> findQuestionsByExamId(int examId) {
+        return questionMapper.findQuestionsByExamId(examId);
+    }
     @Override
     @Transactional
     public boolean saveStudentAnswers(List<StudentAnswer> answers) {
-        // 假设已有批量插入方法
-        return studentAnswerMapper.batchInsert(answers) == answers.size();
+        return studentAnswerMapper.insertStudentAnswers(answers) == answers.size();
+    }
+    @Override
+    public boolean isExamSubmittedByStudent(int examId, int studentId) {
+        return studentAnswerMapper.existsByStudentIdAndExamId(studentId, examId);
+    }
+
+    @Override
+    public boolean calculateAndInsertScores(int examId) {
+        try {
+            examResultMapper.calculateAndInsertScores(examId);
+            return true;
+        } catch (Exception e) {
+            // Log the exception details
+            System.err.println("Error in calculating and inserting scores: " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public List<StudentExamResult> getExamResults(int examId) {
+        return examResultMapper.findAllResultsByExamId(examId);
     }
 }

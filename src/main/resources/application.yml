@@ -4,3 +4,10 @@ spring:
     url: jdbc:mysql://localhost:3306/qinlan
     username: root
     password: root
+
+  #发件人相关的信息
+  email:
+    user: 2737492311@qq.com
+    code: yacfjtkzhxttdebb
+    host: smtp.qq.com
+    auth: true

@@ -33,6 +33,16 @@ public interface QuestionMapper {
     @Delete("DELETE FROM questions WHERE question_id = #{questionId}")
     int delete(int questionId);
 
-    @Select("SELECT q.* FROM questions q JOIN exam_questions eq ON q.question_id = eq.question_id WHERE eq.exam_id = #{examId}")
+    @Select("SELECT * FROM questions WHERE question_id IN (SELECT question_id FROM exam_questions WHERE exam_id = #{examId})")
+    @Results({
+            @Result(property = "questionId", column = "question_id"),
+            @Result(property = "description", column = "description"),
+            @Result(property = "optionA", column = "option_a"),
+            @Result(property = "optionB", column = "option_b"),
+            @Result(property = "optionC", column = "option_c"),
+            @Result(property = "optionD", column = "option_d"),
+            @Result(property = "correctAnswer", column = "correct_answer")
+    })
     List<Question> findQuestionsByExamId(int examId);
+
 }

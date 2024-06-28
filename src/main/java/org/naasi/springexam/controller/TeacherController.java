@@ -1,22 +1,24 @@
 package org.naasi.springexam.controller;
 
 import org.naasi.springexam.mapper.ExamInfoMapper;
-import org.naasi.springexam.pojo.ExamInfo;
-import org.naasi.springexam.pojo.ExamPublishDTO;
-import org.naasi.springexam.pojo.Question;
+import org.naasi.springexam.pojo.*;
+import org.naasi.springexam.service.EmailService;
 import org.naasi.springexam.service.ExamService;
 import org.naasi.springexam.service.QuestionService;
+import org.naasi.springexam.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/teacher")
 public class TeacherController {
-
+    @Autowired
+    private StudentService studentService;
     @Autowired
     private QuestionService questionService;
 
@@ -25,6 +27,10 @@ public class TeacherController {
 
     @Autowired
     private ExamInfoMapper examInfoMapper;
+
+    @Autowired
+    private EmailService emailService;
+
     @PostMapping("/addQuestion")
     public ResponseEntity<?> addQuestion(@RequestBody Question question) {
         boolean isAdded = questionService.addQuestion(question);
@@ -61,5 +67,31 @@ public class TeacherController {
         return ResponseEntity.ok(activeExams);
     }
 
+    // 获取所有学生信息
+    @GetMapping("/students")
+    public ResponseEntity<List<StudentInfo>> getAllStudents() {
+        List<StudentInfo> students = studentService.findAllStudents();
+        if (students.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(students);
+    }
+    @Autowired
+    private EmailProperties emailProperties;
+    @GetMapping("/sendExamResults/{examId}")
+    public ResponseEntity<?> sendExamResults(@PathVariable int examId) {
+        System.out.println(emailProperties);
+        List<StudentExamResult> results = examService.getExamResults(examId);
+        List<String> emails = new ArrayList<>();
+        List<String> contents = new ArrayList<>();
 
+        for (StudentExamResult result : results) {
+            emails.add(result.getStudentId() + "@czu.cn");  // 构建邮箱地址
+            contents.add("您的成绩是：" + result.getScore());  // 构建邮件内容
+        }
+
+        // 使用sendBulk方法批量发送邮件
+        boolean allEmailsSent = emailService.sendBulk(emails, "考试成绩通知", contents);
+        return allEmailsSent ? ResponseEntity.ok("所有成绩邮件已发送") : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("发送邮件过程中有失败的情况");
+    }
 }

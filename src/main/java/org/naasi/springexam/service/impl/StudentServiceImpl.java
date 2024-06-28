@@ -7,6 +7,8 @@ import org.naasi.springexam.mapper.StudentInfoMapper;
 import org.naasi.springexam.pojo.StudentInfo;
 import org.naasi.springexam.service.StudentService;
 
+import java.util.List;
+
 @Service
 public class StudentServiceImpl implements StudentService {
 
@@ -28,6 +30,12 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public boolean updateStudentInfo(StudentInfo studentInfo) {
         return studentInfoMapper.update(studentInfo) == 1;
+    }
+
+
+    @Override
+    public List<StudentInfo> findAllStudents() {
+        return studentInfoMapper.findAllStudents();
     }
 
     @Override

@@ -20,9 +20,9 @@ public interface StudentAnswerMapper {
     @Delete("DELETE FROM student_answers WHERE student_id = #{studentId} AND exam_id = #{examId} AND question_id = #{questionId}")
     int delete(int studentId, int examId, int questionId);
 
-    // 插入学生答案并自动计算正确性
-    @Insert("INSERT INTO student_answers(student_id, exam_id, question_id, correct_answer, student_answer, is_correct) " +
-            "VALUES(#{studentId}, #{examId}, #{questionId}, " +
+    // 插入学生答案并自动计算正确性,已经弃用，改成批量注入脚本
+    @Insert("INSERT INTO student_answers (student_id, exam_id, question_id, correct_answer, student_answer, is_correct) " +
+            "VALUES (#{studentId}, #{examId}, #{questionId}, " +
             "(SELECT correct_answer FROM questions WHERE question_id = #{questionId}), " +
             "#{studentAnswer}, " +
             "(SELECT correct_answer FROM questions WHERE question_id = #{questionId}) = #{studentAnswer})")
@@ -32,10 +32,16 @@ public interface StudentAnswerMapper {
             "<script>",
             "INSERT INTO student_answers (student_id, exam_id, question_id, correct_answer, student_answer, is_correct) VALUES ",
             "<foreach collection='answers' item='answer' separator=','>",
-            "(#{answer.studentId}, #{answer.examId}, #{answer.questionId}, #{answer.correctAnswer}, #{answer.studentAnswer}, #{answer.isCorrect})",
+            "(#{answer.studentId}, #{answer.examId}, #{answer.questionId}, ",
+            "(SELECT correct_answer FROM questions WHERE question_id = #{answer.questionId}), ",
+            "#{answer.studentAnswer}, ",
+            "(SELECT correct_answer FROM questions WHERE question_id = #{answer.questionId}) = #{answer.studentAnswer})",
             "</foreach>",
             "</script>"
     })
-    @Options(useGeneratedKeys = true, keyProperty = "id")
-    int batchInsert(List<StudentAnswer> answers);
+    int insertStudentAnswers(List<StudentAnswer> answers);
+    @Select("SELECT COUNT(*) > 0 FROM student_answers WHERE student_id = #{studentId} AND exam_id = #{examId}")
+    boolean existsByStudentIdAndExamId(int studentId, int examId);
+
+
 }

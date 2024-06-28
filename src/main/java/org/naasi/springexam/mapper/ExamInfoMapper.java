@@ -9,7 +9,6 @@ import java.util.List;
 @Mapper  // 确保每个Mapper接口都有这个注解，如果没有全局的 @MapperScan
 public interface ExamInfoMapper {
     // 插入考试信息
-    // 插入考试信息
     @Insert("INSERT INTO exam_info(exam_name, start_time, end_time) VALUES(#{examName}, #{startTime}, #{endTime})")
     @Options(useGeneratedKeys = true, keyProperty = "examId", keyColumn = "exam_id")
     int insert(ExamInfo examInfo);
