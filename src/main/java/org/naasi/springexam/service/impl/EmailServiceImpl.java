@@ -1,4 +1,5 @@
 package org.naasi.springexam.service.impl;
+import org.naasi.springexam.mapper.ExamResultMapper;
 import org.naasi.springexam.pojo.EmailProperties;
 import org.naasi.springexam.service.EmailService;
 import org.naasi.springexam.security.MailUtil;
@@ -11,7 +12,8 @@ import java.util.List;
 public class EmailServiceImpl implements EmailService {
     @Autowired
     private EmailProperties emailProperties;
-
+    @Autowired
+    private ExamResultMapper examResultMapper;
     @Override
     public boolean send(String to, String title, String content) {
         return MailUtil.sendMail(emailProperties, to, title, content);
@@ -28,4 +30,5 @@ public class EmailServiceImpl implements EmailService {
         }
         return allSent;
     }
+
 }

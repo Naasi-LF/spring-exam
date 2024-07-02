@@ -1,9 +1,6 @@
 package org.naasi.springexam.controller;
 
-import org.naasi.springexam.pojo.ExamResult;
-import org.naasi.springexam.pojo.Question;
-import org.naasi.springexam.pojo.StudentAnswer;
-import org.naasi.springexam.pojo.StudentExamResult;
+import org.naasi.springexam.pojo.*;
 import org.naasi.springexam.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -64,5 +61,13 @@ public class ExamController {
         }
         return ResponseEntity.ok(results);
     }
+    @GetMapping("/{examId}/statistics")
+    public ResponseEntity<ExamStatistics> getExamStatistics(@PathVariable int examId) {
+        ExamStatistics stats = examService.getExamStatistics(examId);
 
+        if (stats == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(stats);
+    }
 }

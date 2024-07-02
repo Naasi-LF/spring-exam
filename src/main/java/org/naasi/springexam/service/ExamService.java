@@ -15,5 +15,5 @@ public interface ExamService {
 
     boolean calculateAndInsertScores(int examId);  // 计算并插入成绩的方法
     List<StudentExamResult> getExamResults(int examId);
-
+    ExamStatistics getExamStatistics(int examId);
 }

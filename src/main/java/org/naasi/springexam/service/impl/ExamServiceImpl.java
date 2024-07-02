@@ -65,4 +65,30 @@ public class ExamServiceImpl implements ExamService {
     public List<StudentExamResult> getExamResults(int examId) {
         return examResultMapper.findAllResultsByExamId(examId);
     }
+
+    @Override
+    public ExamStatistics getExamStatistics(int examId) {
+        List<StudentExamResult> results = examResultMapper.findAllResultsByExamId(examId);
+        if (results.isEmpty()) {
+            return null;
+        }
+
+        double sum = 0;
+        double max = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
+        for (StudentExamResult result : results) {
+            double score = result.getScore();
+            sum += score;
+            if (score > max) {
+                max = score;
+            }
+            if (score < min) {
+                min = score;
+            }
+        }
+
+        double average = sum / results.size();
+
+        return new ExamStatistics(average, max, min, results);
+    }
 }
